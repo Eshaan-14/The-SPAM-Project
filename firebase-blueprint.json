@@ -1,0 +1,84 @@
+{
+  "entities": {
+    "Task": {
+      "title": "Task",
+      "description": "A task or event in the user's schedule.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "deadline": { "type": "number" },
+        "hasTime": { "type": "boolean" },
+        "estimatedDuration": { "type": "number" },
+        "minDuration": { "type": "number" },
+        "isHardBlock": { "type": "boolean" },
+        "startTime": { "type": "number" },
+        "priority": { "type": "string", "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+        "isImportant": { "type": "boolean" },
+        "isCompleted": { "type": "boolean" },
+        "createdAt": { "type": "number" },
+        "completedAt": { "type": "number" },
+        "recurrence": { "type": "string", "enum": ["none", "daily", "weekly", "monthly"] },
+        "goalId": { "type": "string" },
+        "isAutoCompletable": { "type": "boolean" },
+        "notes": { "type": "string" },
+        "contributionLevel": { "type": "number" },
+        "canceledDates": { "type": "array", "items": { "type": "number" } },
+        "uid": { "type": "string" }
+      },
+      "required": ["id", "name", "deadline", "estimatedDuration", "priority", "isImportant", "isCompleted", "createdAt", "uid"]
+    },
+    "Goal": {
+      "title": "Goal",
+      "description": "A high-level goal or category.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "color": { "type": "string" },
+        "uid": { "type": "string" }
+      },
+      "required": ["id", "name", "color", "uid"]
+    },
+    "UserSettings": {
+      "title": "User Settings",
+      "description": "User preferences like custom task order and timer progress.",
+      "type": "object",
+      "properties": {
+        "customOrder": { "type": "array", "items": { "type": "string" } },
+        "taskProgress": { "type": "object", "additionalProperties": { "type": "number" } },
+        "uid": { "type": "string" }
+      },
+      "required": ["uid"]
+    },
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "User profile data like username and onboarding status.",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "hasCompletedOnboarding": { "type": "boolean" },
+        "uid": { "type": "string" }
+      },
+      "required": ["uid"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/tasks/{taskId}": {
+      "schema": { "$ref": "#/entities/Task" },
+      "description": "Tasks belonging to the user."
+    },
+    "/users/{userId}/goals/{goalId}": {
+      "schema": { "$ref": "#/entities/Goal" },
+      "description": "Goals belonging to the user."
+    },
+    "/users/{userId}/settings/{settingId}": {
+      "schema": { "$ref": "#/entities/UserSettings" },
+      "description": "Settings for the user (e.g., 'preferences')."
+    },
+    "/users/{userId}/profile/{documentId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Profile data for the user (e.g., 'data')."
+    }
+  }
+}

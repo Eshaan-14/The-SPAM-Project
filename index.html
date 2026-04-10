@@ -1,0 +1,382 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Spam Project | Act Now</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+      }
+      // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+      if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches) || !localStorage.getItem('theme')) {
+        document.documentElement.classList.add('dark')
+        localStorage.setItem('theme', 'dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@500;800&display=swap');
+        
+        :root {
+            /* Default Variables (Light Mode) */
+            --bg-color: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --glass-bg: #ffffff;
+            --glass-border: #e2e8f0;
+            --header-bg: #ffffff;
+            --card-bg: #ffffff;
+            --input-bg: #f1f5f9;
+            --input-border: #cbd5e1;
+            --modal-backdrop: rgba(15, 23, 42, 0.5);
+            
+            --spam-purple: #2563eb; /* Primary Blue Accent */
+            --spam-glow: #bfdbfe;
+            --tech-cyan: #2563eb;
+            --grid-color: rgba(37, 99, 235, 0.05);
+        }
+
+        /* Theme: Medium (Dark Mode) */
+        body.theme-medium {
+            --bg-color: #0f172a;
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --glass-bg: #1e293b;
+            --glass-border: #334155;
+            --header-bg: #0f172a;
+            --spam-purple: #3b82f6; /* Primary Blue Accent */
+            --spam-glow: #1e3a8a;
+            --tech-cyan: #3b82f6;
+            --grid-color: rgba(59, 130, 246, 0.05);
+            --input-bg: #020617;
+            --input-border: #334155;
+            --card-bg: #1e293b;
+            --modal-backdrop: rgba(2, 6, 23, 0.8);
+        }
+
+        /* Theme: Calm (Light Mode) */
+        body.theme-calm {
+            --bg-color: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --glass-bg: #ffffff;
+            --glass-border: #e2e8f0;
+            --header-bg: #ffffff;
+            --spam-purple: #2563eb; /* Primary Blue Accent */
+            --spam-glow: #bfdbfe;
+            --tech-cyan: #2563eb;
+            --grid-color: rgba(37, 99, 235, 0.05);
+            --input-bg: #f1f5f9;
+            --input-border: #cbd5e1;
+            --card-bg: #ffffff;
+            --modal-backdrop: rgba(15, 23, 42, 0.5);
+        }
+
+        /* Theme: High Pressure (Serious Mode - High Contrast Dark) */
+        body.theme-high-pressure {
+            --bg-color: #000000;
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --glass-bg: #09090b;
+            --glass-border: #27272a;
+            --header-bg: #000000;
+            --spam-purple: #ef4444; /* Red Accent for Serious Mode */
+            --spam-glow: #7f1d1d;
+            --tech-cyan: #ef4444;
+            --grid-color: rgba(239, 68, 68, 0.05);
+            --input-bg: #09090b;
+            --input-border: #27272a;
+            --card-bg: #09090b;
+            --modal-backdrop: rgba(0, 0, 0, 0.9);
+        }
+
+        /* Vibe Themes - Overrides REMOVED to prevent conflict with user-selected themes */
+        /* The vibe is now only reflected in specific components like the Streak card */
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow: hidden;
+            min-height: 100vh;
+            transition: background-color 0.5s ease;
+        }
+
+        body.app-ready { overflow: auto; }
+
+        /* Tech Splash Screen */
+        .splash-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: #020617;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: auto;
+        }
+
+        .splash-screen::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(168, 85, 247, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(168, 85, 247, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        .scanlines {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 3px, 3px 100%;
+            pointer-events: none;
+            z-index: 2005;
+        }
+
+        .scanner-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(to bottom, transparent, rgba(168, 85, 247, 0.1), transparent);
+            box-shadow: 0 4px 10px rgba(168, 85, 247, 0.2);
+            animation: scan-move 4s linear infinite;
+            z-index: 2004;
+        }
+
+        @keyframes scan-move {
+            0% { top: -100px; }
+            100% { top: 100vh; }
+        }
+
+        .splash-content {
+            z-index: 2010;
+            text-align: center;
+            position: relative;
+        }
+
+        .reactor-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .reactor-ring {
+            position: absolute;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 50%;
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .ring-inner { width: 140px; height: 140px; border-style: dashed; animation: spin-linear 6s infinite linear; }
+        .ring-mid { width: 200px; height: 200px; border-width: 2px; animation: spin-linear 10s infinite linear reverse; }
+        .ring-outer { width: 260px; height: 260px; border-width: 1px; border-style: double; animation: spin-linear 20s infinite linear; }
+
+        @keyframes spin-linear { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+
+        .reactor-core {
+            width: 90px;
+            height: 90px;
+            background: #0f172a;
+            border: 2px solid var(--spam-purple);
+            border-radius: 20px;
+            transform: rotate(45deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+            transition: all 0.4s ease;
+        }
+
+        .bolt-main {
+            transform: rotate(-45deg);
+            font-size: 40px;
+            color: var(--spam-purple);
+            filter: drop-shadow(0 0 10px var(--spam-purple));
+            animation: core-flicker 2s infinite ease-in-out;
+        }
+
+        @keyframes core-flicker {
+            0%, 100% { opacity: 0.8; transform: rotate(-45deg) scale(0.9); }
+            50% { opacity: 1; transform: rotate(-45deg) scale(1.1); }
+        }
+
+        .clutter {
+            position: absolute;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 800;
+            color: rgba(71, 85, 105, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            pointer-events: none;
+            transition: all 0.5s ease;
+        }
+
+        .clutter-tag {
+            font-size: 8px;
+            color: var(--tech-cyan);
+            opacity: 0.6;
+            margin-left: 5px;
+        }
+
+        .igniting .reactor-core { background: var(--spam-purple); animation: reactor-overdrive 0.1s infinite; }
+        .igniting .bolt-main { color: white; filter: drop-shadow(0 0 20px white); }
+        .igniting .reactor-ring { border-color: var(--spam-purple); border-width: 3px; animation-duration: 0.5s !important; }
+
+        @keyframes reactor-overdrive {
+            0% { transform: rotate(45deg) translate(2px, 2px); }
+            50% { transform: rotate(45deg) translate(-2px, -1px); }
+            100% { transform: rotate(45deg) translate(1px, 2px); }
+        }
+
+        .splash-screen.bursting {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .shockwave {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            z-index: 2200;
+            pointer-events: none;
+        }
+
+        .shock-active {
+            animation: shock-expand 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards !important;
+        }
+
+        @keyframes shock-expand {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(250); opacity: 1; background: var(--spam-purple); }
+            100% { transform: translate(-50%, -50%) scale(500); opacity: 0; }
+        }
+
+        .app-container {
+            opacity: 0;
+            transform: scale(0.98);
+            transition: opacity 1s cubic-bezier(0.165, 0.84, 0.44, 1), transform 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .app-container.entered { opacity: 1; transform: scale(1); }
+
+        .glass { 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(16px); 
+            border: 1px solid var(--glass-border); 
+            transition: background 0.3s ease, border 0.3s ease;
+        }
+
+        .theme-input {
+            background-color: var(--input-bg);
+            border-color: var(--input-border);
+            color: var(--text-main);
+        }
+
+        .theme-text {
+            color: var(--text-main);
+        }
+
+        .theme-text-muted {
+            color: var(--text-muted);
+        }
+
+        /* --- Custom Animations --- */
+        @keyframes complete-victory {
+            0% { background-color: transparent; transform: scale(1); }
+            30% { background-color: rgba(16, 185, 129, 0.3); transform: scale(1.02); box-shadow: 0 0 50px rgba(16, 185, 129, 0.5); }
+            100% { background-color: transparent; transform: scale(1); opacity: 0; }
+        }
+
+        .animate-complete {
+            animation: complete-victory 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes next-action-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.2); }
+            70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+        }
+
+        .next-action-card {
+            animation: next-action-pulse 2s infinite;
+        }
+
+        .overdue-edge-flicker {
+            animation: edge-flicker 0.4s ease-out;
+        }
+
+        @keyframes edge-flicker {
+            0% { box-shadow: inset 0 0 100px rgba(244, 63, 94, 0); }
+            50% { box-shadow: inset 0 0 100px rgba(244, 63, 94, 0.4); }
+            100% { box-shadow: inset 0 0 100px rgba(244, 63, 94, 0); }
+        }
+
+        .urgency-pulse {
+            animation: urgency-pulse-red 1.5s infinite;
+        }
+
+        @keyframes urgency-pulse-red {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        .scanline-highlight {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(168, 85, 247, 0.2);
+            animation: scanline-move 3s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scanline-move {
+            0% { top: 0; opacity: 0; }
+            5% { opacity: 1; }
+            95% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.41.0",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.4"
+  }
+}
+</script>
+</head>
+<body class="min-h-screen bg-white dark:bg-[#0a0a0a] text-slate-900 dark:text-white">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+</body>
+</html>
