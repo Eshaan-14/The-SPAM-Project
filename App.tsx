@@ -297,6 +297,8 @@ const App: React.FC = () => {
   const [chaosMinutes, setChaosMinutes] = useState(0);
   const [returnToTaskForm, setReturnToTaskForm] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
+  const [isEditingUsername, setIsEditingUsername] = useState(false);
+  const [tempUsername, setTempUsername] = useState('');
   const [showLogin, setShowLogin] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -439,6 +441,24 @@ const App: React.FC = () => {
       } catch (e) {
         handleFirestoreError(e, OperationType.WRITE, `users/${userId}/profile/data`);
       }
+    }
+  };
+
+  const handleUpdateUsername = async () => {
+    if (!tempUsername.trim() || !userId) {
+      setIsEditingUsername(false);
+      return;
+    }
+    const newUsername = tempUsername.trim();
+    setUsername(newUsername);
+    setIsEditingUsername(false);
+    try {
+      await setDoc(doc(db, `users/${userId}/profile/data`), {
+        username: newUsername,
+        uid: userId
+      }, { merge: true });
+    } catch (e) {
+      handleFirestoreError(e, OperationType.WRITE, `users/${userId}/profile/data`);
     }
   };
 
@@ -921,7 +941,38 @@ const App: React.FC = () => {
                  </div>
                  <div>
                    <p className="text-xs text-slate-400 uppercase tracking-wider">Current Pilot</p>
-                   <h2 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{username}</h2>
+                   {isEditingUsername ? (
+                     <div className="flex items-center justify-center gap-2 mt-2">
+                       <input 
+                         type="text" 
+                         value={tempUsername} 
+                         onChange={(e) => setTempUsername(e.target.value)}
+                         onKeyDown={(e) => e.key === 'Enter' && handleUpdateUsername()}
+                         className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-center font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 w-40"
+                         autoFocus
+                       />
+                       <button 
+                         onClick={handleUpdateUsername}
+                         className="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-600 transition-colors"
+                       >
+                         <i className="fa-solid fa-check"></i>
+                       </button>
+                     </div>
+                   ) : (
+                     <div className="flex items-center justify-center gap-2 mt-1 group">
+                       <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{username}</h2>
+                       <button 
+                         onClick={() => {
+                           setTempUsername(username || '');
+                           setIsEditingUsername(true);
+                         }}
+                         className="w-6 h-6 rounded-md text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"
+                         title="Edit Name"
+                       >
+                         <i className="fa-solid fa-pen text-xs"></i>
+                       </button>
+                     </div>
+                   )}
                  </div>
                  <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100">
                    <p className="text-xs text-emerald-600 font-bold uppercase tracking-wider flex items-center justify-center gap-2">
