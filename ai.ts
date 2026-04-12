@@ -37,5 +37,26 @@ export const getDailyInsight = async (tasks: Task[]): Promise<string> => {
 export const getSchedulingOptimization = async (tasks: Task[]): Promise<string> => {
   const incompleteTasks = tasks.filter(t => !t.isCompleted);
   if (incompleteTasks.length === 0) return "Execution queue is nominal. No optimization required.";
-  return "Strategic link offline. Proceed with manual execution based on urgency markers.";
+
+  // Strip heavy Firebase data before sending to the AI so it doesn't crash
+  const aiPayload = incompleteTasks.map(t => ({
+    name: t.name,
+    urgency: t.urgencyLevel,
+  }));
+
+  try {
+    const response = await fetch('/api/optimize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tasks: aiPayload })
+    });
+    
+    if (!response.ok) throw new Error('Optimization request failed');
+    
+    const data = await response.json();
+    return data.suggestion;
+  } catch (error) {
+    console.error("AI Scheduler Error:", error);
+    return "Strategic link offline. Proceed with manual execution based on urgency markers.";
+  }
 };

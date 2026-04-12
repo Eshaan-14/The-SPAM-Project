@@ -34,15 +34,25 @@ const ModusOperandi: React.FC<ModusOperandiProps> = ({ tasks }) => {
           </h3>
           <p className="text-[10px] theme-text-muted uppercase tracking-widest mt-1">Strategic Execution Engine</p>
         </div>
+        
+        {/* --- UI FIX START --- */}
         {!suggestion && (
           <button 
             onClick={handleGenerate}
-            disabled={loading}
-            className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-90 shadow-lg ${loading ? 'bg-slate-700 animate-pulse' : 'bg-[var(--spam-purple)] hover:opacity-90 text-slate-900 dark:text-white'}`}
+            disabled={loading || tasks.length === 0}
+            className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all shadow-lg ${
+              loading 
+                ? 'bg-slate-700 animate-pulse' 
+                : tasks.length === 0 
+                  ? 'bg-[var(--spam-purple)]/30 opacity-50 cursor-not-allowed text-slate-500' 
+                  : 'bg-[var(--spam-purple)] hover:opacity-90 active:scale-90 text-slate-900 dark:text-white'
+            }`}
           >
             <i className={`fa-solid ${loading ? 'fa-circle-notch fa-spin' : 'fa-wand-magic-sparkles'}`}></i>
           </button>
         )}
+        {/* --- UI FIX END --- */}
+
       </div>
 
       {suggestion ? (
@@ -69,7 +79,9 @@ const ModusOperandi: React.FC<ModusOperandiProps> = ({ tasks }) => {
              <i className="fa-solid fa-brain text-2xl"></i>
           </div>
           <p className="text-[10px] theme-text-muted uppercase tracking-widest max-w-[200px]">
-            Initialize AI analysis to optimize your execution path.
+            {tasks.length === 0 
+              ? "Add tasks to the queue to initialize AI analysis." 
+              : "Initialize AI analysis to optimize your execution path."}
           </p>
         </div>
       )}
