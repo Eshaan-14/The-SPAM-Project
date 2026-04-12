@@ -43,8 +43,8 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({ onComplete }) => {
     {
       id: 'modus',
       target: 'nav-modus',
-      title: "MODUS OPERANDI",
-      message: "Your personal rulebook. Write down your principles, routines, and standard operating procedures here.",
+      title: "AI SCHEDULER",
+      message: "Your strategic engine. Get AI-powered suggestions on what to tackle next based on your current workload.",
       showInput: false
     },
     {

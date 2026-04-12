@@ -91,6 +91,7 @@ const App: React.FC = () => {
   const [splashStep, setSplashStep] = useState<'welcome' | 'igniting' | 'bursting' | 'done'>('welcome');
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
+  const [isAuthReady, setIsAuthReady] = useState(false);
   
   const fullWelcomeMsg = "SYSTEM_STATUS: PARALYSIS_DETECTED";
 
@@ -229,7 +230,7 @@ const App: React.FC = () => {
 
   const initiateLaunch = useCallback(() => {
     initAudio(); 
-    if (splashStep !== 'welcome' || isTyping) return;
+    if (splashStep !== 'welcome' || isTyping || !isAuthReady) return;
     
     setSplashStep('igniting');
     playIgnitionSound(); 
@@ -242,7 +243,7 @@ const App: React.FC = () => {
         setSplashStep('done');
       }, 1000); 
     }, 1200);
-  }, [splashStep, isTyping, playIgnitionSound]);
+  }, [splashStep, isTyping, playIgnitionSound, isAuthReady]);
 
   useEffect(() => {
     if (splashStep !== 'welcome') return;
@@ -294,6 +295,7 @@ const App: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [isTimerActive, setIsTimerActive] = useState<boolean>(false);
   const [isTimerMinimized, setIsTimerMinimized] = useState<boolean>(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [chaosMinutes, setChaosMinutes] = useState(0);
   const [returnToTaskForm, setReturnToTaskForm] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
@@ -367,7 +369,9 @@ const App: React.FC = () => {
       } else {
         setUserId(null);
         setUsername(null);
+        setShowLogin(true);
       }
+      setIsAuthReady(true);
     });
     return () => unsubscribe();
   }, []);
@@ -700,19 +704,27 @@ const App: React.FC = () => {
         <Sidebar 
           goals={goals}
           activeTab={viewMode === 'modus' ? 'dashboard' : viewMode}
-          setActiveTab={(tab) => setViewMode(tab)}
+          setActiveTab={(tab) => { setViewMode(tab); setIsSidebarOpen(false); }}
           selectedGoalId={selectedGoalId}
-          setSelectedGoalId={setSelectedGoalId}
+          setSelectedGoalId={(id) => { setSelectedGoalId(id); setIsSidebarOpen(false); }}
           onOpenGoalModal={() => setShowGoalForm(true)}
           streak={streak}
           progressPercent={executionStats.progressPercent}
           vibe={vibe}
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
         />
 
         <div className="flex-1 flex flex-col overflow-hidden relative">
           <header className="p-4 sticky top-0 z-40 bg-white dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-700 transition-colors duration-500">
             <div className="max-w-5xl mx-auto flex gap-4 justify-between items-center">
               <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => setIsSidebarOpen(true)}
+                  className="md:hidden w-10 h-10 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border-b-4 border-slate-200 dark:border-slate-900 hover:bg-slate-50 dark:hover:bg-slate-700 active:border-b-0 active:translate-y-[4px]"
+                >
+                  <i className="fa-solid fa-bars"></i>
+                </button>
                 <div 
                   className="bg-blue-600 text-white px-3 py-2 rounded-xl flex items-center justify-center shadow-md transform -rotate-2 cursor-pointer hover:scale-105 transition-transform"
                   onClick={() => { initAudio(); playIgnitionSound(); }}
@@ -723,8 +735,8 @@ const App: React.FC = () => {
               </div>
               
               <div className="flex items-center gap-3">
-                <button id="nav-modus" onClick={() => setViewMode('modus')} className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${viewMode === 'modus' ? 'bg-white dark:bg-slate-800 text-blue-600 border-b-4 border-slate-200 dark:border-slate-900 active:border-b-0 active:translate-y-[4px]' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 border-b-4 border-transparent'}`}>
-                  <i className="fa-solid fa-crosshairs mr-2"></i> Modus
+                <button id="nav-modus" onClick={() => setViewMode('modus')} className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all hidden sm:block ${viewMode === 'modus' ? 'bg-white dark:bg-slate-800 text-blue-600 border-b-4 border-slate-200 dark:border-slate-900 active:border-b-0 active:translate-y-[4px]' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 border-b-4 border-transparent'}`}>
+                  <i className="fa-solid fa-wand-magic-sparkles mr-2"></i> AI Scheduler
                 </button>
 
                 <ChaosControl chaosMinutes={chaosMinutes} setChaosMinutes={setChaosMinutes} />
@@ -763,9 +775,21 @@ const App: React.FC = () => {
             <div className="max-w-5xl mx-auto space-y-8 relative">
               {viewMode === 'dashboard' && (
                 <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                  <div className="flex p-1 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                  <div className="flex p-1 bg-slate-50 dark:bg-slate-800 rounded-xl items-center gap-1">
                     <button onClick={handleSetToday} className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${selectedDate.toDateString() === new Date().toDateString() ? 'bg-white dark:bg-slate-900 text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'}`}>Today</button>
                     <button onClick={handleSetTomorrow} className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${selectedDate.toDateString() === new Date(Date.now() + 86400000).toDateString() ? 'bg-white dark:bg-slate-900 text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'}`}>Tmrw</button>
+                    <div className="w-px h-4 bg-slate-300 dark:bg-slate-600 mx-1"></div>
+                    <input 
+                      type="date" 
+                      value={`${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`}
+                      onChange={(e) => {
+                        if (e.target.value) {
+                          const [year, month, day] = e.target.value.split('-').map(Number);
+                          setSelectedDate(new Date(year, month - 1, day));
+                        }
+                      }}
+                      className="bg-transparent border-none text-xs font-bold text-slate-600 dark:text-slate-300 focus:ring-0 cursor-pointer"
+                    />
                   </div>
 
                   <div className="flex items-center gap-4 px-2 overflow-x-auto w-full md:w-auto no-scrollbar">
@@ -929,9 +953,11 @@ const App: React.FC = () => {
                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">Identity Link</h3>
                  <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Pilot Authentication</p>
                </div>
-               <button onClick={() => setShowLogin(false)} className="w-10 h-10 rounded-full hover:bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 transition-colors">
-                 <i className="fa-solid fa-xmark"></i>
-               </button>
+               {userId && (
+                 <button onClick={() => setShowLogin(false)} className="w-10 h-10 rounded-full hover:bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 transition-colors">
+                   <i className="fa-solid fa-xmark"></i>
+                 </button>
+               )}
              </div>
              
              {userId ? (

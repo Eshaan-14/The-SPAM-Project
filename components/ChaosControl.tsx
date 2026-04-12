@@ -16,7 +16,7 @@ const ChaosControl: React.FC<ChaosControlProps> = ({ chaosMinutes, setChaosMinut
         className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all relative active:scale-95 group overflow-hidden border ${chaosMinutes > 0 ? 'bg-rose-600 text-slate-900 dark:text-white border-rose-600 shadow-md urgency-pulse' : 'bg-white dark:bg-slate-900 text-rose-500 border-slate-200 dark:border-slate-700 hover:bg-rose-50 dark:bg-rose-900/30 shadow-sm'}`}
         title="Chaos Injection"
       >
-        <i className={`fa-solid ${chaosMinutes > 0 ? 'fa-fire-flame-simple' : 'fa-bolt-lightning'} text-lg`}></i>
+        <i className={`fa-solid fa-clock text-lg`}></i>
         {chaosMinutes > 0 && (
           <span className="absolute -top-1 -right-1 bg-white dark:bg-slate-900 text-rose-600 text-[8px] font-bold px-1.5 py-0.5 rounded-full border border-rose-200 dark:border-rose-800 shadow-sm tabular-nums">
             {chaosMinutes}m
@@ -32,11 +32,15 @@ const ChaosControl: React.FC<ChaosControlProps> = ({ chaosMinutes, setChaosMinut
             <div className="flex flex-col gap-6">
               <div className="flex justify-between items-center">
                 <div>
-                  <h3 className="text-xs font-bold text-rose-600 uppercase tracking-wider">Chaos Magnitude</h3>
-                  <p className="text-[10px] text-slate-400 uppercase tracking-wider mt-0.5">Injection Intensity</p>
+                  <h3 className="text-xs font-bold text-rose-600 uppercase tracking-wider">Chaos Mode</h3>
+                  <p className="text-[10px] text-slate-400 uppercase tracking-wider mt-0.5">Simulate schedule disruptions</p>
                 </div>
                 <div className="text-2xl font-bold text-slate-900 dark:text-white font-mono">+{chaosMinutes}m</div>
               </div>
+              
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Add unexpected delays to your schedule to test how your task priorities adapt to "chaos".
+              </p>
               
               {/* Range adjustment bar */}
               <div className="space-y-2">

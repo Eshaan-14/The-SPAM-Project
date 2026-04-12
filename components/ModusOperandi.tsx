@@ -29,8 +29,8 @@ const ModusOperandi: React.FC<ModusOperandiProps> = ({ tasks }) => {
       <div className="flex justify-between items-start mb-4">
         <div>
           <h3 className="text-xl font-black uppercase tracking-tight theme-text flex items-center gap-2">
-            <i className="fa-solid fa-chess-knight text-[var(--spam-purple)]"></i>
-            Modus Operandi
+            <i className="fa-solid fa-wand-magic-sparkles text-[var(--spam-purple)]"></i>
+            AI Scheduler
           </h3>
           <p className="text-[10px] theme-text-muted uppercase tracking-widest mt-1">Strategic Execution Engine</p>
         </div>

@@ -11,6 +11,8 @@ interface SidebarProps {
   streak: number;
   progressPercent: number;
   vibe: 'positive' | 'neutral' | 'negative';
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -22,20 +24,34 @@ const Sidebar: React.FC<SidebarProps> = ({
   onOpenGoalModal,
   streak,
   progressPercent,
-  vibe
+  vibe,
+  isOpen,
+  onClose
 }) => {
   return (
-    <div className="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 h-screen flex flex-col shrink-0">
-      <div className="p-6 border-b border-slate-200 dark:border-slate-700">
-        <h1 className="text-sm font-black tracking-tight text-slate-900 dark:text-white leading-loose uppercase">
-          <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-600 text-white rounded mr-2">S</span>ystematic<br/>
-          <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-600 text-white rounded mr-2">P</span>roductivity and<br/>
-          <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-600 text-white rounded mr-2">A</span>ctivity<br/>
-          <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-600 text-white rounded mr-2">M</span>anagement
-        </h1>
-      </div>
+    <>
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-900/50 z-40 md:hidden backdrop-blur-sm"
+          onClick={onClose}
+        />
+      )}
+      
+      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 h-screen flex flex-col shrink-0 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-start">
+          <h1 className="text-sm font-black tracking-tight text-slate-900 dark:text-white leading-loose uppercase">
+            <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-600 text-white rounded mr-2">S</span>ystematic<br/>
+            <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-600 text-white rounded mr-2">P</span>roductivity and<br/>
+            <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-600 text-white rounded mr-2">A</span>ctivity<br/>
+            <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-600 text-white rounded mr-2">M</span>anagement
+          </h1>
+          <button onClick={onClose} className="md:hidden w-8 h-8 flex items-center justify-center text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+            <i className="fa-solid fa-xmark"></i>
+          </button>
+        </div>
 
-      <div className="p-4 space-y-2">
+        <div className="p-4 space-y-2">
         <button
           id="nav-dashboard"
           onClick={() => setActiveTab('dashboard')}
@@ -154,6 +170,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
     </div>
+    </>
   );
 };
 
