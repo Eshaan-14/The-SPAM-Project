@@ -8,7 +8,7 @@ export default async function handler(req: any, res: any) {
     
     // "as string" forces TypeScript to stop panicking about undefined variables
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const prompt = `You are a strict, no-nonsense productivity AI for the "SPAM" (Stop Planning, Act More) app. 
     The user has a task: "${taskName}" with an urgency level of "${urgencyLevel}". 
