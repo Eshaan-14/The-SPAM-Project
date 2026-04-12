@@ -32,16 +32,17 @@ export const getDailyInsight = async (tasks: Task[]): Promise<string> => {
 };
 
 /**
- * Temporarily bypassed until the /api/optimize backend route is created.
+ * Calls the Vercel AI backend to optimize the execution order of tasks.
  */
 export const getSchedulingOptimization = async (tasks: Task[]): Promise<string> => {
   const incompleteTasks = tasks.filter(t => !t.isCompleted);
   if (incompleteTasks.length === 0) return "Execution queue is nominal. No optimization required.";
 
-  // Strip heavy Firebase data before sending to the AI so it doesn't crash
+  // PERFECTLY TYPED: Using priority and estimatedDuration from your exact types
   const aiPayload = incompleteTasks.map(t => ({
     name: t.name,
-    urgency: t.urgencyLevel,
+    priority: t.priority,
+    durationInMinutes: t.estimatedDuration 
   }));
 
   try {
@@ -57,6 +58,6 @@ export const getSchedulingOptimization = async (tasks: Task[]): Promise<string> 
     return data.suggestion;
   } catch (error) {
     console.error("AI Scheduler Error:", error);
-    return "Strategic link offline. Proceed with manual execution based on urgency markers.";
+    return "Strategic link offline. Proceed with manual execution based on priority markers.";
   }
 };

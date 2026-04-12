@@ -1,13 +1,13 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-export default async function handler(req, res) {
+export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
 
   try {
     const { tasks } = req.body;
     
-    // Remember: Backend uses process.env, not VITE_ !
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    // "as string" fixes the undefined error
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `You are the ruthless, highly efficient AI execution engine for the "SPAM" (Stop Planning, Act More) app.
