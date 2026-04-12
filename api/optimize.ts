@@ -8,7 +8,7 @@ export default async function handler(req: any, res: any) {
     
     // "as string" fixes the undefined error
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     const prompt = `You are the ruthless, highly efficient AI execution engine for the "SPAM" (Stop Planning, Act More) app.
     The user has these pending tasks: ${JSON.stringify(tasks)}.
