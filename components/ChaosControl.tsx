@@ -28,7 +28,7 @@ const ChaosControl: React.FC<ChaosControlProps> = ({ chaosMinutes, setChaosMinut
         <>
           <div className="fixed inset-0 z-[100]" onClick={() => setIsOpen(false)}></div>
           
-          <div className="absolute top-full right-0 mt-3 z-[110] w-[300px] bg-white dark:bg-slate-900 p-6 rounded-2xl animate-in slide-in-from-top-2 duration-300 border border-slate-200 dark:border-slate-700 shadow-xl">
+          <div className="fixed sm:absolute left-4 right-4 top-20 sm:top-full sm:left-auto sm:right-0 sm:mt-3 z-[110] w-auto sm:w-[300px] bg-white dark:bg-slate-900 p-6 rounded-2xl animate-in slide-in-from-top-4 sm:slide-in-from-top-2 duration-300 border border-slate-200 dark:border-slate-700 shadow-xl">
             <div className="flex flex-col gap-6">
               <div className="flex justify-between items-center">
                 <div>
