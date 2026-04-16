@@ -13,6 +13,7 @@ import GoalsView from './components/GoalsView';
 import ModusOperandi from './components/ModusOperandi';
 import Sidebar from './components/Sidebar';
 import OnboardingModal from './components/OnboardingModal';
+import WelcomeScreen from './components/WelcomeScreen';
 import { auth, db, loginWithGoogle, logout } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { collection, doc, onSnapshot, setDoc, deleteDoc } from 'firebase/firestore';
@@ -646,6 +647,14 @@ const App: React.FC = () => {
   const isSplashActive = splashStep !== 'done';
   const isAppVisible = splashStep === 'bursting' || splashStep === 'done';
 
+  if (!isAuthReady) {
+    return <div className="min-h-screen bg-[#020617]"></div>;
+  }
+
+  if (!userId) {
+    return <WelcomeScreen onLogin={handleLogin} loginError={loginError} />;
+  }
+
   return (
     <div className={`min-h-screen bg-white dark:bg-[#0a0a0a] transition-colors duration-500 ${showEdgeFlicker ? 'overdue-edge-flicker' : ''}`}>
       
@@ -953,91 +962,63 @@ const App: React.FC = () => {
                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">Identity Link</h3>
                  <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Pilot Authentication</p>
                </div>
-               {userId && (
-                 <button onClick={() => setShowLogin(false)} className="w-10 h-10 rounded-full hover:bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 transition-colors">
-                   <i className="fa-solid fa-xmark"></i>
-                 </button>
-               )}
+               <button onClick={() => setShowLogin(false)} className="w-10 h-10 rounded-full hover:bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 transition-colors">
+                 <i className="fa-solid fa-xmark"></i>
+               </button>
              </div>
              
-             {userId ? (
-               <div className="space-y-6 text-center">
-                 <div className="w-20 h-20 rounded-full bg-indigo-50 dark:bg-indigo-900/30 mx-auto flex items-center justify-center text-3xl text-indigo-600">
-                   <i className="fa-solid fa-user-astronaut"></i>
-                 </div>
-                 <div>
-                   <p className="text-xs text-slate-400 uppercase tracking-wider">Current Pilot</p>
-                   {isEditingUsername ? (
-                     <div className="flex items-center justify-center gap-2 mt-2">
-                       <input 
-                         type="text" 
-                         value={tempUsername} 
-                         onChange={(e) => setTempUsername(e.target.value)}
-                         onKeyDown={(e) => e.key === 'Enter' && handleUpdateUsername()}
-                         className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-center font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 w-40"
-                         autoFocus
-                       />
-                       <button 
-                         onClick={handleUpdateUsername}
-                         className="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-600 transition-colors"
-                       >
-                         <i className="fa-solid fa-check"></i>
-                       </button>
-                     </div>
-                   ) : (
-                     <div className="flex items-center justify-center gap-2 mt-1 group">
-                       <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{username}</h2>
-                       <button 
-                         onClick={() => {
-                           setTempUsername(username || '');
-                           setIsEditingUsername(true);
-                         }}
-                         className="w-6 h-6 rounded-md text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"
-                         title="Edit Name"
-                       >
-                         <i className="fa-solid fa-pen text-xs"></i>
-                       </button>
-                     </div>
-                   )}
-                 </div>
-                 <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100">
-                   <p className="text-xs text-emerald-600 font-bold uppercase tracking-wider flex items-center justify-center gap-2">
-                     <i className="fa-solid fa-cloud"></i>
-                     Data Synced to Cloud
-                   </p>
-                 </div>
-                 <button 
-                   onClick={handleLogout}
-                   className="w-full py-3 rounded-xl border border-rose-200 dark:border-rose-800 text-rose-600 font-bold text-xs uppercase tracking-wider hover:bg-rose-50 dark:bg-rose-900/30 transition-colors"
-                 >
-                   Disconnect
-                 </button>
+             <div className="space-y-6 text-center">
+               <div className="w-20 h-20 rounded-full bg-indigo-50 dark:bg-indigo-900/30 mx-auto flex items-center justify-center text-3xl text-indigo-600">
+                 <i className="fa-solid fa-user-astronaut"></i>
                </div>
-             ) : (
-               <div className="space-y-6">
-                 <div className="text-center space-y-2">
-                   <div className="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 text-2xl mx-auto mb-4">
-                     <i className="fa-solid fa-cloud-arrow-down"></i>
+               <div>
+                 <p className="text-xs text-slate-400 uppercase tracking-wider">Current Pilot</p>
+                 {isEditingUsername ? (
+                   <div className="flex items-center justify-center gap-2 mt-2">
+                     <input 
+                       type="text" 
+                       value={tempUsername} 
+                       onChange={(e) => setTempUsername(e.target.value)}
+                       onKeyDown={(e) => e.key === 'Enter' && handleUpdateUsername()}
+                       className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-center font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 w-40"
+                       autoFocus
+                     />
+                     <button 
+                       onClick={handleUpdateUsername}
+                       className="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-600 transition-colors"
+                     >
+                       <i className="fa-solid fa-check"></i>
+                     </button>
                    </div>
-                   <h4 className="font-bold text-slate-900 dark:text-white">Cloud Sync Disabled</h4>
-                   <p className="text-xs text-slate-500">Sign in with Google to sync your tasks and goals across all your devices.</p>
-                 </div>
-                 
-                 {loginError && (
-                   <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-center">
-                     <p className="text-xs text-rose-600 dark:text-rose-400 font-bold">{loginError}</p>
+                 ) : (
+                   <div className="flex items-center justify-center gap-2 mt-1 group">
+                     <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{username}</h2>
+                     <button 
+                       onClick={() => {
+                         setTempUsername(username || '');
+                         setIsEditingUsername(true);
+                       }}
+                       className="w-6 h-6 rounded-md text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"
+                       title="Edit Name"
+                     >
+                       <i className="fa-solid fa-pen text-xs"></i>
+                     </button>
                    </div>
                  )}
-
-                 <button 
-                   onClick={handleLogin}
-                   className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2"
-                 >
-                   <i className="fa-brands fa-google"></i>
-                   Sign in with Google
-                 </button>
                </div>
-             )}
+               <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100">
+                 <p className="text-xs text-emerald-600 font-bold uppercase tracking-wider flex items-center justify-center gap-2">
+                   <i className="fa-solid fa-cloud"></i>
+                   Data Synced to Cloud
+                 </p>
+               </div>
+               <button 
+                 onClick={handleLogout}
+                 className="w-full py-3 rounded-xl border border-rose-200 dark:border-rose-800 text-rose-600 font-bold text-xs uppercase tracking-wider hover:bg-rose-50 dark:bg-rose-900/30 transition-colors"
+               >
+                 Disconnect
+               </button>
+             </div>
           </div>
         </div>
       )}
