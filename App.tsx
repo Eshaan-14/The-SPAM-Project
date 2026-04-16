@@ -1,3 +1,4 @@
+import './index.css'
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Task, UrgencyLevel, Goal } from './types';
@@ -17,6 +18,7 @@ import WelcomeScreen from './components/WelcomeScreen';
 import { auth, db, loginWithGoogle, logout } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { collection, doc, onSnapshot, setDoc, deleteDoc } from 'firebase/firestore';
+
 
 enum OperationType {
   CREATE = 'create',
@@ -926,7 +928,7 @@ const App: React.FC = () => {
       )}
 
       {showGoalForm && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-white dark:bg-slate-900/50 backdrop-blur-sm transition-colors duration-500">
+        <div className="fixed inset-0 z-110 flex items-center justify-center p-4 bg-white dark:bg-slate-900/50 backdrop-blur-sm transition-colors duration-500">
           <GoalForm 
             existingGoals={goals} 
             onAdd={goal => { 
