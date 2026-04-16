@@ -10,7 +10,12 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, loginError }) =>
 
   return (
     <div className={`fixed inset-0 z-[2000] bg-[#020617] flex flex-col items-center justify-center overflow-hidden transition-colors duration-300 ${isStorming ? 'bg-slate-900' : ''}`}>
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(168,85,247,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(168,85,247,0.05)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,#000_20%,transparent_100%)] z-0"></div>
+      {/* Abstract Glowing Aura Background */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-[10%] -left-[10%] w-[60vw] h-[60vw] rounded-full bg-purple-700/20 blur-[100px] animate-pulse mix-blend-screen" style={{ animationDuration: '4s' }}></div>
+        <div className="absolute -bottom-[20%] -right-[10%] w-[60vw] h-[60vw] rounded-full bg-blue-700/20 blur-[100px] animate-pulse mix-blend-screen" style={{ animationDuration: '5s', animationDelay: '1s' }}></div>
+        <div className="absolute top-[20%] left-[30%] w-[50vw] h-[50vw] rounded-full bg-indigo-600/10 blur-[100px] animate-pulse mix-blend-screen" style={{ animationDuration: '6s', animationDelay: '2s' }}></div>
+      </div>
       
       {isStorming && (
         <>
