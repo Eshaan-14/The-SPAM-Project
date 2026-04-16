@@ -746,10 +746,7 @@ const App: React.FC = () => {
               </div>
               
               <div className="flex items-center gap-1 sm:gap-3">
-                <button id="nav-modus" onClick={() => setViewMode('modus')} className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all hidden sm:block ${viewMode === 'modus' ? 'bg-white dark:bg-slate-800 text-blue-600 border-b-4 border-slate-200 dark:border-slate-900 active:border-b-0 active:translate-y-[4px]' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 border-b-4 border-transparent'}`}>
-                  <i className="fa-solid fa-wand-magic-sparkles mr-2"></i> AI Scheduler
-                </button>
-
+            
                 <ChaosControl chaosMinutes={chaosMinutes} setChaosMinutes={setChaosMinutes} />
                 
                 <div className="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-0.5 sm:mx-1"></div>

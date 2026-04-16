@@ -157,7 +157,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-bold transition-all ${
                 selectedGoalId === goal.id
                   ? 'bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white'
-                  : 'text-slate-400 hover:bg-slate-50 dark:bg-slate-800 hover:text-slate-700'
+                  : 'text-slate-400 hover:bg-slate-50 dark:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200'
               }`}
             >
               <div 
@@ -167,6 +167,23 @@ const Sidebar: React.FC<SidebarProps> = ({
               <span className="truncate">{goal.name}</span>
             </button>
           ))}
+        </div>
+
+        <div className="mb-4 px-2">
+          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Automations</h3>
+          <button
+            onClick={() => setActiveTab('modus')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all border ${
+              activeTab === 'modus'
+                ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 border-indigo-200 dark:border-indigo-800 shadow-sm'
+                : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600 shadow-sm'
+            }`}
+          >
+            <div className={`w-8 h-8 flex items-center justify-center rounded-lg ${activeTab === 'modus' ? 'bg-indigo-100 dark:bg-indigo-900/50' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
+              <i className="fa-solid fa-wand-magic-sparkles"></i>
+            </div>
+            AI Scheduler
+          </button>
         </div>
       </div>
     </div>
