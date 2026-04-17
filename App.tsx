@@ -883,7 +883,7 @@ const App: React.FC = () => {
               </AnimatePresence>
               <footer className="mt-16 pt-8 pb-4 text-center border-t border-slate-200 dark:border-slate-800">
                 <p className="text-sm font-medium text-slate-500 dark:text-slate-400 tracking-wide">
-                  built by <span className="text-blue-500 font-bold">The Product Folks:</span> NIT Trichy
+                  Built by <span className="text-blue-500 font-bold">The Product Folks:</span> NIT Trichy
                 </p>
               </footer>
             </div>
