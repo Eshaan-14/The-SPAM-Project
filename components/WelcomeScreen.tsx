@@ -55,7 +55,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLogin, loginError }) =>
         </p>
         
         <div className="w-full bg-slate-900/80 backdrop-blur-md border border-slate-800 p-8 rounded-3xl shadow-2xl">
-          <h2 className="text-xl font-bold text-white mb-2">Identity Link Required</h2>
+          <h2 className="text-xl font-bold text-white mb-2">Google Sign In Required</h2>
           <p className="text-slate-400 text-sm mb-8">Authenticate to sync your execution parameters and bypass paralysis.</p>
           
           {loginError && (
